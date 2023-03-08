@@ -24,3 +24,4 @@ Route::get("/users/{id}",[UserAPI::class, 'getUsersByID']);
 Route::post("/users",[UserAPI::class, 'createUser']);
 Route::put("/users/{id}", [UserAPI::class, 'updateUserByID']);
 Route::delete("/users/{id}", [UserAPI::class, 'deleteUserByID']);
+Route::post("/authorization", [UserAPI::class, 'authorization']);
