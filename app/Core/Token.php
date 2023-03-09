@@ -3,21 +3,23 @@
 namespace App\Core;
 
 use DateInterval;
-use App\Models\Token as Token;
-
+use App\Models\Token as TokenModel;
 class Token
 {
     function tokenMaker($data)
     {
-        $token_value = md5($data);
-        $token = new Token();
-        $token->token = $token_value;
+        $tokenValue = md5($data);
+        $token = new TokenModel();
+        $token->token = $tokenValue;
         $token->save();
     }
 
-    function checkTokenForAvailability($verification_token)
+    function checkTokenForAvailability($verificationToken): bool
     {
-        $token = Token::where('token', "$verification_token")->first();
+        if ($verificationToken === null)
+            return false;
+
+        $token = TokenModel::where('token', "$verificationToken")->first();
         $time = $token->created_at;
 
 
@@ -28,7 +30,7 @@ class Token
         return true;
     }
 
-    function checkTokenTimeUp($time)
+    function checkTokenTimeUp($time): bool
     {
         $time->add(new DateInterval('PT' . 15 . 'M'));
         $removalTime = $time->format('Y-m-d h:i:s');

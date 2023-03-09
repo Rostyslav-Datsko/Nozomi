@@ -6,15 +6,16 @@ use App\Core\Token as Token;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use \Illuminate\Http\JsonResponse;
 
 class UserAPI extends Controller
 {
-    function getAllUsers(Request $request)
+    function getAllUsers(Request $request): JsonResponse
     {
         $token = new Token();
-        if ($token->checkTokenForAvailability($request->bearerToken())){
+        if (!$token->checkTokenForAvailability($request->bearerToken()))
             return response()->json(['message' => 'Unauthorized '], 401 );
-        }
+
 
         $result =  User::all();
         if ($result){
@@ -26,14 +27,14 @@ class UserAPI extends Controller
         }
     }
 
-    function getUsersByID(Request $request, $user_id)
+    function getUsersByID(Request $request, $userId): JsonResponse
     {
         $token = new Token();
-        if ($token->checkTokenForAvailability($request->bearerToken())){
+        if (!$token->checkTokenForAvailability($request->bearerToken())){
             return response()->json(['message' => 'Unauthorized '], 401 );
         }
 
-        $result = User::find($user_id);
+        $result = User::find($userId);
         if ($result){
             return response()->json(['message' => 'the request has been succeeded','data' => $result],201 );
         }
@@ -43,10 +44,10 @@ class UserAPI extends Controller
         }
     }
 
-    function createUser(Request $request )
+    function createUser(Request $request ): JsonResponse
     {
         $token = new Token();
-        if ($token->checkTokenForAvailability($request->bearerToken())){
+        if (!$token->checkTokenForAvailability($request->bearerToken())){
             return response()->json(['message' => 'Unauthorized '], 401 );
         }
 
@@ -67,10 +68,10 @@ class UserAPI extends Controller
 
     }
 
-    function updateUserByID($user_id,Request $request)
+    function updateUserByID($user_id,Request $request): JsonResponse
     {
         $token = new Token();
-        if ($token->checkTokenForAvailability($request->bearerToken())){
+        if (!$token->checkTokenForAvailability($request->bearerToken())){
             return response()->json(['message' => 'Unauthorized '], 401 );
         }
 
@@ -91,10 +92,10 @@ class UserAPI extends Controller
 
     }
 
-    function deleteUserByID(Request $request, $user_id)
+    function deleteUserByID(Request $request, $user_id): JsonResponse
     {
         $token = new Token();
-        if ($token->checkTokenForAvailability($request->bearerToken())){
+        if (!$token->checkTokenForAvailability($request->bearerToken())){
             return response()->json(['message' => 'Unauthorized '], 401 );
         }
 
@@ -110,27 +111,7 @@ class UserAPI extends Controller
 
     }
 
-    function authorization(Request $request)
-    {
-        $user = User::where('email', "$request->email")->first();
-        if ($user){
-            if ($user['password'] === md5($request->password)){
-                $token = new Token();
-                $token->tokenMaker($request->password);
-                return response()->json(['message' => 'Authorization was successful',],200 );
-            }
-            else
-            {
-                return response()->json(['message' => 'password or login is incorrect'], 404);
-            }
 
-        }
-        else
-        {
-            return response()->json(['message' => 'password or login is incorrect'], 404);
-        }
-
-    }
 
 
 }
